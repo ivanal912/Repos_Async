@@ -23,9 +23,7 @@ struct Repository: Decodable {
 // Our initial function (needs fixing...)
 func fetchRepositories() async throws -> [Repository] {
   let url = URL(string: "https://api.github.com/search/repositories?q=language:swift&sort=stars&order=desc")!
-  print("Step 2")
   let (data, _) = try await URLSession.shared.data(from: url)
-  print("Step 3")
   return try JSONDecoder().decode(Repositories.self, from: data).repos
 }
 
@@ -35,11 +33,17 @@ func fetchRepositories() async throws -> [Repository] {
 // - interject lots of print statements with 'Step X' to see how things are progressing
 Task {
   print("Step 1")
-  let repos = try await fetchRepositories()
-  print("Step 4")
-  for repo in repos {
-    print(repo.name)
-    print(repo.htmlURL)
+  do {
+    print("Step 2")
+    let repos = try await fetchRepositories()
+    print("Step 3")
+    for repo in repos {
+      print("- \(repo.name): \(repo.htmlURL)")
+    }
+    print("Step 4")
+  }
+  catch {
+    print(error)
   }
   print("Step 5")
 }
